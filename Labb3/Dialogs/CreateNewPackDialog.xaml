@@ -1,0 +1,114 @@
+﻿<Window x:Class="Labb3.Dialogs.CreateNewPackDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Labb3.Dialogs"
+        xmlns:c="clr-namespace:Labb3.Converters"
+        mc:Ignorable="d"
+        Title="Create New Pack" 
+        Height="360" Width="320"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Background="#F0F0F0">
+
+    <Window.Resources>
+        <c:DiffConverter x:Key="MyDiffConverter"/>
+
+        <Style TargetType="Label">
+            <Setter Property="FontFamily" Value="Segoe UI Semibold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#444"/>
+            <Setter Property="Margin" Value="0,10,0,0"/>
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border Padding="20">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#FFFFFF" Offset="0.0"/>
+                <GradientStop Color="#E6E6FA" Offset="1.0"/>
+            </LinearGradientBrush>
+        </Border.Background>
+
+        <StackPanel>
+            <TextBlock Text="New Pack Details" 
+                       FontSize="20" 
+                       FontFamily="Segoe UI Light" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,15"
+                       Foreground="#333"/>
+
+            <Label Content="NAME"/>
+            <Border BorderBrush="#CCC" BorderThickness="1" CornerRadius="4" Background="White">
+                <TextBox Text="{Binding ThePack.Name, UpdateSourceTrigger=PropertyChanged}" 
+                         Height="25" 
+                         VerticalContentAlignment="Center"
+                         BorderThickness="0" 
+                         Padding="5,0"/>
+            </Border>
+
+            <Label Content="DIFFICULTY LEVEL"/>
+            <ComboBox Height="28" 
+                      SelectedIndex="{Binding ThePack.Difficulty, Converter={StaticResource MyDiffConverter}}"
+                      VerticalContentAlignment="Center">
+                <ComboBoxItem Content="Easy"/>
+                <ComboBoxItem Content="Medium"/>
+                <ComboBoxItem Content="Hard"/>
+            </ComboBox>
+
+            <Grid Margin="0,15,0,5">
+                <Label Content="TIME LIMIT" Margin="0" VerticalAlignment="Bottom"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                    <TextBlock Text="{Binding ElementName=TimeSlider, Path=Value}" 
+                               FontWeight="Bold" 
+                               Foreground="#007ACC" 
+                               FontSize="14"/>
+                    <TextBlock Text=" seconds" 
+                               Foreground="#007ACC" 
+                               VerticalAlignment="Bottom"/>
+                </StackPanel>
+            </Grid>
+
+            <Slider x:Name="TimeSlider"
+                    Minimum="5" Maximum="120"
+                    TickFrequency="5" IsSnapToTickEnabled="True"
+                    Value="{Binding ThePack.TimeLimit}"
+                    AutoToolTipPlacement="TopLeft"/>
+
+            <Grid Margin="0,25,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" 
+                        Content="Cancel" 
+                        Command="{Binding CancelCmd}"
+                        Background="#A9A9A9"
+                        Margin="0,0,5,0"/>
+
+                <Button Grid.Column="1" 
+                        Content="Create Pack" 
+                        Command="{Binding SavePackCmd}"
+                        Background="#4CAF50"
+                        Margin="5,0,0,0"/>
+            </Grid>
+        </StackPanel>
+    </Border>
+</Window>

@@ -1,0 +1,92 @@
+﻿<UserControl x:Class="Labb3.Views.MenuView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+             xmlns:local="clr-namespace:Labb3.Views"
+             mc:Ignorable="d" 
+             Height="Auto" Width="Auto" MinWidth="600">
+
+    <Border BorderBrush="#DDD" BorderThickness="0,0,0,1">
+        <Menu Padding="5">
+            <Menu.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#FFFFFF" Offset="0"/>
+                    <GradientStop Color="#F5F5F5" Offset="1"/>
+                </LinearGradientBrush>
+            </Menu.Background>
+
+            <MenuItem Header="FILE" FontWeight="SemiBold">
+
+                <MenuItem Header="Create New Pack" 
+                          Command="{Binding OpenCreateCmd}"
+                          Icon="{fa:Icon FolderPlus}"/>
+
+                <MenuItem Header="Select Pack" Icon="{fa:Icon FolderOpen}">
+                    <MenuItem.ItemsSource>
+                        <Binding Path="PackList"/>
+                    </MenuItem.ItemsSource>
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="Header" Value="{Binding Name}" />
+                            <Setter Property="Command" Value="{Binding DataContext.SelectPackCmd, RelativeSource={RelativeSource AncestorType=Window}}" />
+                            <Setter Property="CommandParameter" Value="{Binding}" />
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                </MenuItem>
+
+                <MenuItem Header="Delete Current Pack" 
+                          Command="{Binding RemovePackCmd}"
+                          Icon="{fa:Icon Trash}"
+                          IsEnabled="{Binding CanDeletePack}"/>
+
+                <Separator/>
+
+                <MenuItem Header="Import from Web..." 
+                          Command="{Binding ImportCmd}"
+                          Icon="{fa:Icon CloudDownload}"/>
+
+                <Separator/>
+
+                <MenuItem Header="Exit Application" 
+                          Command="{Binding QuitCmd}"
+                          Icon="{fa:Icon SignOut}"/>
+            </MenuItem>
+
+            <MenuItem Header="EDIT" FontWeight="SemiBold">
+                <MenuItem Header="Add New Question" 
+                          Command="{Binding ConfigVM.NewQCmd}"
+                          Icon="{fa:Icon PlusCircle}"/>
+
+                <MenuItem Header="Delete Selected Question" 
+                          Command="{Binding ConfigVM.RemoveQCmd}"
+                          Icon="{fa:Icon MinusCircle}"/>
+
+                <Separator/>
+
+                <MenuItem Header="Pack Settings..." 
+                          Command="{Binding ConfigVM.OptionsCmd}"
+                          Icon="{fa:Icon Cogs}"/>
+            </MenuItem>
+
+            <MenuItem Header="VIEW" FontWeight="SemiBold">
+                <MenuItem Header="Start Quiz" 
+                          Command="{Binding PlayerVM.StartGameCmd}"
+                          Icon="{fa:Icon Play}"
+                          IsEnabled="{Binding PlayerVM.CanStart}"/>
+
+                <MenuItem Header="Edit Mode" 
+                          Command="{Binding ConfigVM.GoToConfigCmd}"
+                          Icon="{fa:Icon Edit}"/>
+
+                <Separator/>
+
+                <MenuItem Header="Toggle Fullscreen" 
+                          Command="{Binding FullScreenCmd}"
+                          Icon="{fa:Icon ExpandArrowsAlt}"/>
+            </MenuItem>
+
+        </Menu>
+    </Border>
+</UserControl>
