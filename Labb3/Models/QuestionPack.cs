@@ -4,11 +4,12 @@ using Labb3.Converters;
 
 namespace Labb3.Models
 {
-    internal class QuestionPack
+    public class QuestionPack
     {
         public string Name { get; set; }
         public Difficulty Difficulty { get; set; }
         public int TimeLimitInSeconds { get; set; }
+        public string CategoryName { get; set; }
         public List<Question> Questions { get; set; }
 
         public QuestionPack(string name = "<PackName>", Difficulty difficulty = Difficulty.Medium, int timeLimitInSeconds = 30)

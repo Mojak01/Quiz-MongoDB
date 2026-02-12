@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Labb3.Models
 {
-    internal class Question
+    public class Question
     {
         public string Query { get; set; }
         public string CorrectAnswer { get; set; }
