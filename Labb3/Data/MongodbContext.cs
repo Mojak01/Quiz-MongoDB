@@ -16,8 +16,23 @@ namespace Labb3.Data
         public IMongoCollection<QuestionPack> QuestionPacks =>
             _db.GetCollection<QuestionPack>("QuestionPacks");
 
-        public IMongoCollection<Category> Categoris =
+        public IMongoCollection<Category> Categories =>
         _db.GetCollection<Category>("Categories");
+
+        public async Task SavePacksAsync(List<QuestionPack> packs)
+        {
+            await QuestionPacks.DeleteManyAsync(_ => true);
+            if (packs.Count > 0)
+            {
+                await QuestionPacks.InsertManyAsync(packs);
+            }
+        }
+
+        public async Task<List<QuestionPack>> LoadPacksAsync()
+        {
+            return await QuestionPacks.Find(_ => true).ToListAsync();
+        }
+
 
     }
 }
