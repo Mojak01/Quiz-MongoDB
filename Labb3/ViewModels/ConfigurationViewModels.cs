@@ -90,7 +90,7 @@ namespace Labb3.ViewModels
             UpdateVis();
         }
 
-        private void DoAdd(object obj)
+        private async void DoAdd(object obj)
         {
             if (CurrentPack != null)
             {
@@ -104,7 +104,7 @@ namespace Labb3.ViewModels
 
                 RefreshAllCommands();
                 UpdateVis();
-                MainVM.SaveToJsonAsync();
+                await MainVM.SaveToMongo();
             }
         }
 
@@ -113,14 +113,14 @@ namespace Labb3.ViewModels
             return IsConfigView;
         }
 
-        private void DoRemove(object obj)
+        private async void DoRemove(object obj)
         {
             if (CurrentPack != null && SelectedQ != null)
             {
                 CurrentPack.Questions.Remove(SelectedQ);
                 RefreshAllCommands();
                 UpdateVis();
-                MainVM.SaveToJsonAsync();
+                await MainVM.SaveToMongo();
             }
         }
 
@@ -141,13 +141,13 @@ namespace Labb3.ViewModels
             return false;
         }
 
-        private void DoOptions(object obj)
+        private async void DoOptions(object obj)
         {
             if (OpenOptionsEvent != null)
             {
                 OpenOptionsEvent(this, EventArgs.Empty);
             }
-            MainVM.SaveToJsonAsync();
+            await MainVM.SaveToMongo();
         }
 
         private bool CanOptions(object obj)

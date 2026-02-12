@@ -1,25 +1,25 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using Labb3.Command;
+﻿using Labb3.Command;
+using Labb3.Data;
 using Labb3.Models;
-
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using MongoDB.Driver;
 namespace Labb3.ViewModels
 {
     internal class MainWindowViewModel : ViewModelBase
     {
 
-        string folderPath;
-        string filePath;
         public ConfigurationViewModel ConfigVM { get; set; }
         public PlayerViewModel PlayerViewModel { get; set; }
 
         public PlayerViewModel PlayerVM => PlayerViewModel;
 
         private QuestionPackViewModel _activePack;
+
+        private MongoDbContext _db;
+
         public QuestionPackViewModel ActivePack
         {
             get { return _activePack; }
@@ -74,8 +74,7 @@ namespace Labb3.ViewModels
         {
             Packs = new ObservableCollection<QuestionPackViewModel>();
 
-            folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Labb3Quiz");
-            filePath = Path.Combine(folderPath, "data.json");
+            _db = new MongoDbContext();
 
             FullScreenCmd = new DelegateCommand(DoToggleFullScreen);
             SaveCmd = new DelegateCommand(DoSave);
@@ -90,7 +89,7 @@ namespace Labb3.ViewModels
             ConfigVM = new ConfigurationViewModel(this);
             PlayerViewModel = new PlayerViewModel(this);
 
-            LoadFromJson();
+            LoadFromMongo();
         }
 
         private void DoToggleFullScreen(object obj)
@@ -99,10 +98,11 @@ namespace Labb3.ViewModels
             ToggleScreenReq?.Invoke(this, _isFullScreen);
         }
 
-        private void DoSave(object obj)
+        private async void DoSave(object obj)
         {
-            SaveToJsonAsync();
+            await SaveToMongo();
         }
+
 
         private void DoImport(object obj)
         {
@@ -123,16 +123,16 @@ namespace Labb3.ViewModels
             CloseWindowReq?.Invoke(this, EventArgs.Empty);
         }
 
-        private void DoSavePack(object obj)
+        private async void DoSavePack(object obj)
         {
-            
+
             if (ThePack != null)
             {
                 Packs.Add(ThePack);
                 ActivePack = ThePack;
                 ThePack = null;
                 CloseWindowReq?.Invoke(this, EventArgs.Empty);
-                SaveToJsonAsync();
+                await SaveToMongo();
             }
         }
 
@@ -160,7 +160,7 @@ namespace Labb3.ViewModels
             ExitReq?.Invoke(this, EventArgs.Empty);
         }
 
-        public void PerformDelete()
+        public async void PerformDelete()
         {
             if (ActivePack != null && Packs.Contains(ActivePack))
             {
@@ -177,7 +177,8 @@ namespace Labb3.ViewModels
 
                 RemovePackCmd.RaiseCanExecuteChanged();
                 RaisePropertyChanged(nameof(CanDeletePack));
-                SaveToJsonAsync();
+                await SaveToMongo();
+
             }
         }
 
@@ -206,66 +207,51 @@ namespace Labb3.ViewModels
             ToggleScreenReq?.Invoke(this, isFull);
         }
 
-        public async void SaveToJsonAsync()
+        public async Task SaveToMongo()
         {
+            var list = new List<QuestionPack>();
 
-            try
+            foreach (var vm in Packs)
             {
-                if (!Directory.Exists(folderPath))
+                var pack = new QuestionPack(vm.Name, vm.Difficulty, vm.TimeLimitInSeconds);
+
+                foreach (var q in vm.Questions)
                 {
-                    Directory.CreateDirectory(folderPath);
+                    pack.Questions.Add(q);
                 }
 
-                var list = new List<QuestionPack>();
-                foreach (var vm in Packs)
-                {
-                    var pack = new QuestionPack(vm.Name, vm.Difficulty, vm.TimeLimitInSeconds);
-                    foreach (var q in vm.Questions)
-                    {
-                        pack.Questions.Add(q);
-                    }
-                    list.Add(pack);
-                }
+                list.Add(pack);
+            }
 
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                string json = JsonSerializer.Serialize(list, options);
-                await File.WriteAllTextAsync(filePath, json);
-            }
-            catch
-            {
-            }
+            await _db.SavePacksAsync(list);
         }
-        private async void LoadFromJson()
+
+
+        private async void LoadFromMongo()
         {
-            try
+            var loaded = await _db.LoadPacksAsync();
+
+            if (loaded != null && loaded.Count > 0)
             {
-                if (File.Exists(filePath))
+                Packs.Clear();
+
+                foreach (var p in loaded)
                 {
-                    string json = await File.ReadAllTextAsync(filePath);
-                    var loaded = JsonSerializer.Deserialize<List<QuestionPack>>(json);
-
-                    if (loaded != null && loaded.Count > 0)
-                    {
-                        Packs.Clear();
-                        foreach (var p in loaded)
-                        {
-                            Packs.Add(new QuestionPackViewModel(p));
-                        }
-                        ActivePack = Packs[0];
-                    }
+                    Packs.Add(new QuestionPackViewModel(p));
                 }
-            }
-            catch
-            {
-            }
 
-            if (Packs.Count == 0)
+                ActivePack = Packs[0];
+            }
+            else
             {
                 var def = new QuestionPack("My First Pack");
                 Packs.Add(new QuestionPackViewModel(def));
                 ActivePack = Packs[0];
+
+                await SaveToMongo();
             }
         }
+
 
     }
 
