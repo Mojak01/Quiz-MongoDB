@@ -15,5 +15,9 @@ namespace Labb3.Data
 
         public IMongoCollection<QuestionPack> QuestionPacks =>
             _db.GetCollection<QuestionPack>("QuestionPacks");
+
+        public IMongoCollection<Category> Categoris =
+        _db.GetCollection<Category>("Categories");
+
     }
 }
