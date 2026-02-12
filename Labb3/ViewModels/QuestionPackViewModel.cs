@@ -61,5 +61,20 @@ namespace Labb3.ViewModels
         }
 
         public ObservableCollection<Question> Questions { get; set; }
+
+        public string CategoryName
+        {
+            get
+            {
+                return _pack.CategoryName;
+            }
+            set
+            {
+                _pack.CategoryName = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
     }
 }
