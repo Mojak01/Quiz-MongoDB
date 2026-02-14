@@ -1,11 +1,16 @@
-﻿using System;
+﻿using Labb3.Converters;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System;
 using System.Collections.Generic;
-using Labb3.Converters;
 
 namespace Labb3.Models
 {
     public class QuestionPack
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
         public string Name { get; set; }
         public Difficulty Difficulty { get; set; }
         public int TimeLimitInSeconds { get; set; }
