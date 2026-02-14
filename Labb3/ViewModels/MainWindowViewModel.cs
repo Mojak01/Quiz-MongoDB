@@ -89,6 +89,24 @@ namespace Labb3.ViewModels
 
             _db = new MongoDbContext();
             var cats = _db.Categories.Find(_ => true).ToList();
+
+            if (cats.Count == 0)
+            {
+                var defaultCats = new List<Category>
+                {
+                    new Category { Name = "General"},
+                    new Category { Name = "Sciente"},
+                    new Category { Name = "Histroy"},
+                    new Category { Name = "Sports"},
+                    new Category { Name = "Sci-Fi"}
+
+                };
+
+                _db.Categories.InsertMany(defaultCats);
+
+                cats = _db.Categories.Find(category => true).ToList();
+            }
+
             Categories = new ObservableCollection<Category>(cats);
 
 
