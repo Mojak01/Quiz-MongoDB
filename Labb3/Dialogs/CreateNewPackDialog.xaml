@@ -7,7 +7,7 @@
         xmlns:c="clr-namespace:Labb3.Converters"
         mc:Ignorable="d"
         Title="Create New Pack" 
-        Height="360" Width="320"
+        Height="420" Width="320"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         Background="#F0F0F0">
@@ -71,6 +71,14 @@
                 <ComboBoxItem Content="Medium"/>
                 <ComboBoxItem Content="Hard"/>
             </ComboBox>
+            
+            <TextBlock Text="CATEGORY" Margin="0,15,0,5"/>
+            <ComboBox
+                    ItemsSource="{Binding Categories}"
+                    SelectedItem="{Binding SelectedCategory}"
+                    DisplayMemberPath="Name"
+                    Width="200"/>       
+
 
             <Grid Margin="0,15,0,5">
                 <Label Content="TIME LIMIT" Margin="0" VerticalAlignment="Bottom"/>
