@@ -33,6 +33,7 @@ namespace Labb3.ViewModels
         }
 
         public ObservableCollection<QuestionPackViewModel> Packs { get; set; }
+        public ObservableCollection<Category> Categories { get; set; }
 
         public ObservableCollection<QuestionPackViewModel> PackList => Packs;
 
@@ -57,6 +58,18 @@ namespace Labb3.ViewModels
         public DelegateCommand CancelCmd { get; set; }
         public DelegateCommand SavePackCmd { get; set; }
 
+
+        private Category _selectedCategory;
+        public Category SelectedCategory
+        {
+            get { return _selectedCategory; }
+            set
+            {
+                _selectedCategory = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private QuestionPackViewModel _thePack;
         public QuestionPackViewModel ThePack
         {
@@ -75,6 +88,9 @@ namespace Labb3.ViewModels
             Packs = new ObservableCollection<QuestionPackViewModel>();
 
             _db = new MongoDbContext();
+            var cats = _db.Categories.Find(_ => true).ToList();
+            Categories = new ObservableCollection<Category>(cats);
+
 
             FullScreenCmd = new DelegateCommand(DoToggleFullScreen);
             SaveCmd = new DelegateCommand(DoSave);
@@ -133,6 +149,11 @@ namespace Labb3.ViewModels
                 ThePack = null;
                 CloseWindowReq?.Invoke(this, EventArgs.Empty);
                 await SaveToMongo();
+            }
+
+            if (SelectedCategory != null)
+            {
+                ThePack.CategoryName = SelectedCategory.Name;
             }
         }
 
@@ -214,6 +235,7 @@ namespace Labb3.ViewModels
             foreach (var vm in Packs)
             {
                 var pack = new QuestionPack(vm.Name, vm.Difficulty, vm.TimeLimitInSeconds);
+                pack.CategoryName = vm.CategoryName;
 
                 foreach (var q in vm.Questions)
                 {
