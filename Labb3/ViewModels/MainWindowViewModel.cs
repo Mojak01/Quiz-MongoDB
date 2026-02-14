@@ -54,9 +54,11 @@ namespace Labb3.ViewModels
         public DelegateCommand RemovePackCmd { get; set; }
         public DelegateCommand SelectPackCmd { get; set; }
         public DelegateCommand QuitCmd { get; set; }
-
         public DelegateCommand CancelCmd { get; set; }
         public DelegateCommand SavePackCmd { get; set; }
+        public string NewCategoryName { get; set; }
+        public DelegateCommand AddCategoryCmd { get; set; }
+
 
 
         private Category _selectedCategory;
@@ -119,6 +121,8 @@ namespace Labb3.ViewModels
             QuitCmd = new DelegateCommand(DoQuit);
             CancelCmd = new DelegateCommand(DoCancel);
             SavePackCmd = new DelegateCommand(DoSavePack);
+            AddCategoryCmd = new DelegateCommand(DoAddCategory);
+
 
             ConfigVM = new ConfigurationViewModel(this);
             PlayerViewModel = new PlayerViewModel(this);
@@ -292,6 +296,20 @@ namespace Labb3.ViewModels
             }
         }
 
+        private void DoAddCategory(object obj)
+        {
+            if (!string.IsNullOrWhiteSpace(NewCategoryName))
+            {
+                var cat = new Category { Name = NewCategoryName };
+
+                _db.Categories.InsertOne(cat);
+
+                Categories.Add(cat);
+
+                NewCategoryName = "";
+                RaisePropertyChanged(nameof(NewCategoryName));
+            }
+        }
 
     }
 
