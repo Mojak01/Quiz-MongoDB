@@ -166,17 +166,19 @@ namespace Labb3.ViewModels
 
             if (ThePack != null)
             {
-                Packs.Add(ThePack);
-                ActivePack = ThePack;
-                ThePack = null;
-                CloseWindowReq?.Invoke(this, EventArgs.Empty);
-                await SaveToMongo();
+                if (SelectedCategory != null)
+                {
+                    ThePack.CategoryName = SelectedCategory.Name;
+                }
             }
 
-            if (SelectedCategory != null)
-            {
-                ThePack.CategoryName = SelectedCategory.Name;
-            }
+
+            Packs.Add(ThePack);
+            ActivePack = ThePack;
+            ThePack = null;
+            CloseWindowReq?.Invoke(this, EventArgs.Empty);
+            await SaveToMongo();
+
         }
 
         private void DoRemovePack(object obj)
