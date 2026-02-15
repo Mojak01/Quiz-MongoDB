@@ -10,7 +10,7 @@ namespace Labb3.Data
         public MongoDbContext()
         {
             var client = new MongoClient("mongodb://localhost:27017");
-            _db = client.GetDatabase("QuizDb");
+            _db = client.GetDatabase("MojtabaAkbari");
         }
 
         public IMongoCollection<QuestionPack> QuestionPacks =>
