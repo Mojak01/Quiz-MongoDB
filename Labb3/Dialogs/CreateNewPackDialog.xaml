@@ -89,6 +89,11 @@
                 Command="{Binding AddCategoryCmd}"
                 Width="200"
                 Background="#4CAF50"/>
+            <Button
+                 Content="Remove Category"
+                 Width="200"
+                 Margin="0,5,0,0"
+                 Background="#A9A9A9"/>   
 
             <Grid Margin="0,15,0,5">
                 <Label Content="TIME LIMIT" Margin="0" VerticalAlignment="Bottom"/>

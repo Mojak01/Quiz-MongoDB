@@ -58,6 +58,7 @@ namespace Labb3.ViewModels
         public DelegateCommand SavePackCmd { get; set; }
         public string NewCategoryName { get; set; }
         public DelegateCommand AddCategoryCmd { get; set; }
+        public DelegateCommand RemoveCategoryCmd { get; set; }
 
 
 
@@ -122,6 +123,7 @@ namespace Labb3.ViewModels
             CancelCmd = new DelegateCommand(DoCancel);
             SavePackCmd = new DelegateCommand(DoSavePack);
             AddCategoryCmd = new DelegateCommand(DoAddCategory);
+            RemoveCategoryCmd = new DelegateCommand(DoRemoveCategory);
 
 
             ConfigVM = new ConfigurationViewModel(this);
@@ -313,6 +315,17 @@ namespace Labb3.ViewModels
             }
         }
 
+        private void DoRemoveCategory(object obj)
+        {
+            if (SelectedCategory != null)
+            {
+                _db.Categories.DeleteOne(c => c.Id == SelectedCategory.Id);
+
+                Categories.Remove(SelectedCategory);
+
+                SelectedCategory = null;
+            }
+        }
     }
 
 }
