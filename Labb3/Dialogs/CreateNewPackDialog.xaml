@@ -93,6 +93,7 @@
                  Content="Remove Category"
                  Width="200"
                  Margin="0,5,0,0"
+                 Command="{Binding RemoveCategoryCmd}"
                  Background="#A9A9A9"/>   
 
             <Grid Margin="0,15,0,5">
